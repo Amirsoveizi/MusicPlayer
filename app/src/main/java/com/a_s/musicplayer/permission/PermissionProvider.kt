@@ -24,12 +24,14 @@ import androidx.compose.ui.text.style.TextAlign
 import com.a_s.musicplayer.ui.utils.Dimens.MediumPadding1
 import com.a_s.musicplayer.ui.utils.Dimens.SmallPadding1
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PermissionProvider(
     permission: Permission,
+    permissionState : MultiplePermissionsState = rememberMultiplePermissionsState(permissions = permission.permissions),
     message: @Composable (isPermanentlyDenied: Boolean,onClick: () -> Unit) -> Unit = { isPermanentlyDenied,onClick ->
         PermissionProviderDefaultMessage(
             title = stringResource(id = permission.title),
@@ -41,7 +43,7 @@ fun PermissionProvider(
     content: @Composable () -> Unit
 ) {
     val activity = LocalContext.current as Activity
-    val permissionState = rememberMultiplePermissionsState(permissions = permission.permissions)
+    permission.permissionGranted = permissionState.allPermissionsGranted
 
     if(!permissionState.shouldShowRationale) {
         SideEffect {
